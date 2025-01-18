@@ -21,7 +21,7 @@ export default function NextPage() {
   return (
     <ScrollView className="flex-1 bg-orange-200 p-6">
 
-      <View className="bg-lime-600 rounded-2xl rounded-t-3xl pb-10">
+      <View className="bg-lime-600 rounded-2xl rounded-t-3xl ">
       {/* Recipe Image Section */}
       <Image
         source={{ uri: selectedRecipe.imageUrl }}
@@ -40,13 +40,13 @@ export default function NextPage() {
       </View>
 
       {/* Instructions Section */}
-      <View>
+      <View className="pb-10">
         <Text className="text-2xl font-semibold text-white mb-2 px-5">Instructions:</Text>
         <View className="flex-col space-y-2 px-5">
           {/* Split the instructions by each step */}
           {selectedRecipe.instructions.split('.').map((step, index) => (
             step.trim() && (
-              <Text key={index} className="text-lg text-white px-5">{step.trim()}.</Text>
+              <Text key={index} className="text-lg text-white px-5 ">{step.trim()}.</Text>
             )
           ))}
         </View>
