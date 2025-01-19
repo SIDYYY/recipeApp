@@ -1,7 +1,6 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import { Tabs } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 export default function TabLayout() {
   return (
@@ -11,7 +10,7 @@ export default function TabLayout() {
         options={{
           title: 'Recipes',
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="restaurant" size={size} color={color} />  // Example icon
+            <MaterialIcons name="restaurant" size={size} color={color} /> 
           ),
         }}
       />

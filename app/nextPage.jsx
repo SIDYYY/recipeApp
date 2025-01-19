@@ -4,8 +4,8 @@ import { useLocalSearchParams, useRouter  } from 'expo-router';
 import { recipes } from '../components/datas/recipe';
 
 export default function NextPage() {
-  const { recipeId } = useLocalSearchParams(); // Extract recipeId from URL params
-  const router = useRouter(); // Access the router for navigation
+  const { recipeId } = useLocalSearchParams(); // Extracting recipeId from local params
+  const router = useRouter(); // The router for navigation
 
 
   const selectedRecipe = recipes.find((recipe) => recipe.id === recipeId);
@@ -22,6 +22,7 @@ export default function NextPage() {
     <ScrollView className="flex-1 bg-orange-200 p-6">
 
       <View className="bg-lime-600 rounded-2xl rounded-t-3xl ">
+        
       {/* Recipe Image Section */}
       <Image
         source={{ uri: selectedRecipe.imageUrl }}
