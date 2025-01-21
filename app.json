@@ -30,7 +30,7 @@
         {
           "image": "./assets/images/circle.png",
           "imageWidth": 200,
-          "resizeMode": "contain",
+          "resizeMode": "cover",
           "backgroundColor": "#ffffff",
           "borderRadius" : "100%"
         }
