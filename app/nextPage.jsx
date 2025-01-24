@@ -1,60 +1,100 @@
-import React from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
-import { useLocalSearchParams, useRouter  } from 'expo-router';
-import { recipes } from '../components/datas/recipe';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+
+// 20/01/2025 Update - Builded the App 
+// 24/01/2025 Update - Add API + Rebuilded
+
+const API_KEY = 'f228514709024550b424b118f5659bcd'; // API KEY from spoonacular API
 
 export default function NextPage() {
-  const { recipeId } = useLocalSearchParams(); // Extracting recipeId from local params
+  const { recipeId } = useLocalSearchParams(); // Extracting recipe ID from params
+  const [recipeDetails, setRecipeDetails] = useState(null);  //for carrying the retrieved data from the API
+  const [loading, setLoading] = useState(true); // for the loading page
+  const [error, setError] = useState(null); // for the error page
 
+  useEffect(() => { //  useEffect to fetch recipe details from the API whenever the recipeId/ID changes
+    const fetchRecipeDetails = async () => {
+      try {
+        const response = await fetch(
+          `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${API_KEY}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch recipe details.'); // will throw an error. If the response is not ok // provide an error
+        }
+        const data = await response.json(); // If response is ok
+        setRecipeDetails(data); // da purpose : to parse the json response and store it in recipeDetails
 
-  const selectedRecipe = recipes.find((recipe) => recipe.id === recipeId);
+        // Will retrieve that specific ID from the API and look if that API ID is existing and it will display its informations and etc 
 
-  if (!selectedRecipe) {
+      } catch (err) {
+        setError(err.message); // throw an error page when theres an error fetching
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipeDetails();
+  }, [recipeId]); // Dependency array - Will rerun the useEffect if recipeId changes
+
+  // Loading Page
+  if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-gray-100 p-4">
+      <View className="flex-1 justify-center items-center bg-gray-100">
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
+  }
+
+  // Error Page
+  if (error) {
+    return (
+      <View className="flex-1 justify-center items-center bg-gray-100">
+        <Text className="text-xl text-red-600">{error}</Text>
+      </View>
+    );
+  }
+
+  // Recipes not found Page 
+  if (!recipeDetails) {
+    return (
+      <View className="flex-1 justify-center items-center bg-gray-100">
         <Text className="text-xl text-red-600">Recipe not found or deleted.</Text>
       </View>
     );
   }
 
+  // Main recipe page 
   return (
     <ScrollView className="flex-1 bg-white p-6 ">
-
-      <View className="rounded-3xl rounded-t-3xl mb-12 border-2 border-black">
-        
-      {/* Recipe Image Section */}
+      {/* Recipe Image */}
       <Image
-        source={{ uri: selectedRecipe.imageUrl }}
-        style={{ width: '100%', height: 250, borderRadius: 12, marginBottom: 20, borderTopRightRadius: 18, borderTopLeftRadius: 18, borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+        source={{ uri: recipeDetails.image }}
+        style={{ width: '100%', height: 250, borderRadius: 12, marginBottom: 20 }}
       />
-      <Text className="text-green-600 text-3xl font-extrabold  mb-4 px-5">{selectedRecipe.title}</Text>
-      <Text className="text-green-600 text-lg mb-7 px-5 ">{selectedRecipe.description}</Text>
 
-      {/* Ingredients Section */}
-      <View className="mb-6 px-6">
-        <Text className="text-2xl font-semibold text-green-600 mb-2 ">Ingredients:</Text>
-        <View className="flex-col space-y-2 px-7 ">
-          {selectedRecipe.ingredients.split(',').map((ingredient, index) => (
-            <Text key={index} className="text-lg text-gray-800">{ingredient.trim()}</Text>
-          ))}
-        </View>
+      {/* Recipe Title */}
+      <Text className="text-green-600 text-3xl font-extrabold mb-4">{recipeDetails.title}</Text>
+
+      {/* Ingredients */}
+      <View className="mb-6">
+        <Text className="text-2xl font-semibold text-green-600 mb-2">Ingredients:</Text>
+        {recipeDetails.extendedIngredients?.map((ingredient, index) => (
+          <Text key={index} className="text-lg text-gray-800">
+            • {ingredient.amount} {ingredient.unit} {ingredient.name}
+          </Text>
+        )) || <Text className="text-lg text-gray-800">No ingredients available.</Text>}
       </View>
 
-      {/* Instructions Section */}
-      <View className="pb-10">
-        <Text className="text-2xl font-semibold text-green-600 mb-2 px-6">Instructions:</Text>
-        <View className="flex-col space-y-2 px-7">
-          {/* Split the instructions by each step */}
-          {selectedRecipe.instructions.split('.').map((step, index) => (
-            step.trim() && (
-              <Text key={index} className="text-lg text-gray-800 px-5 ">{step.trim()}.</Text>
-            )
-          ))}
-        </View>
+      {/* Instructions */}
+      <View className='mb-28'>
+        <Text className="text-2xl font-semibold text-green-600 mb-2">Instructions:</Text>
+        {recipeDetails.analyzedInstructions?.[0]?.steps?.map((step, index) => (
+          <Text key={index} className="text-lg text-gray-800 mb-2">
+            {index + 1}. {step.step}
+          </Text>
+        )) || <Text className="text-lg text-gray-800">No instructions available.</Text>}
       </View>
-      </View>
-          
-
     </ScrollView>
   );
 }

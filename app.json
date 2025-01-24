@@ -28,7 +28,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/circle.png",
+          "image": "./assets/images/WG-SPLASH.png",
           "imageWidth": 200,
           "resizeMode": "cover",
           "backgroundColor": "#ffffff",
